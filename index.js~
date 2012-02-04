@@ -1,0 +1,41 @@
+console.log("starting");
+params = require("./params");
+fs = require('fs');
+
+var render = require("./render");
+var server = require("./server");
+var router = require("./router");
+var requestHandlers = require("./requestHandler");
+
+var handle = {}
+handle["/"] = requestHandlers.start;
+handle["/start"] = requestHandlers.start;
+handle["/query"] = requestHandlers.query;
+handle["/upload"] = requestHandlers.upload;
+
+server.start(router.route, handle);
+var locals = {
+pageTitle: "Welcome",
+youAreUsingJade: true
+};
+
+
+
+//
+
+
+
+//console.log(JSON.stringify(res));
+var html = render.homepageTemplate({
+  users: {
+    tj: { age: 23, email: 'tj@vision-media.ca', isA: 'human' },
+    tobi: { age: 1, email: 'tobi@is-amazing.com', isA: 'ferret' }
+  },
+  pageTitle: "wow"
+});
+
+//console.log(html);
+
+console.log('----------------');
+
+ //console.log(r);
