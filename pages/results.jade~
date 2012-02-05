@@ -5,26 +5,25 @@ h1 Results #{results.length}
 != "var nic = " + JSON.stringify(fields) +";"
 each field in fields
 	-if (field["fieldType"] == "12")
-		!= "data.addColumn('string', '" + field["name"] + "');"
+		!= "data.addColumn('date', '" + field["name"] + "');"
 	-else if (field["fieldType"] == "246")
-		!= "data.addColumn('string', '" + field["name"] + "');"
+		!= "data.addColumn('number', '" + field["name"] + "');"
 	-else
 		!= "data.addColumn('string', '" + field["name"] + "');"
 
-!= "data.addRows(" + JSON.stringify(resultsTable) +");"
+!= "data.addRows(" + resultsTable +");"
 
 != "</script>"
 script(type='text/javascript')
-	data.insertColumn(0,'date','Created');
-	data.insertColumn(1,'number','Price');
-	for(i=0;i<data.getNumberOfRows();i++) {data.setValue(i,0, new Date(data.getValue(i,2)));data.setValue(i,1, parseFloat(data.getValue(i,3)))}
+	//data.insertColumn(0,'date','Created');
+	//data.insertColumn(1,'number','Price');
+	//for(i=0;i<data.getNumberOfRows();i++) {data.setValue(i,0, new Date(data.getValue(i,2)));data.setValue(i,1, parseFloat(data.getValue(i,3)))}
 	function drawChart() {
 	var options = {'title':'#{title}'};
 
 	// Instantiate and draw our chart, passing in some options.
-	data.removeColumn(3);
-	data.removeColumn(3);
-	data.removeColumn(3)
+
+	data.removeColumn(2);
 	var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
 	chart.draw(data, options);
 	var table = new google.visualization.Table(document.getElementById('table_div'));

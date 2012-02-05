@@ -18,12 +18,13 @@ var fields, results, err;
   console.log(sqltxt);
   response.writeHead(200, {"Content-Type": "text/html"});
   db.runQuery(sqltxt, function(fields, results, err){
-  var resultsTable=googlify(results);
+  var resultsTable=googlify(fields, results);
+  console.log((resultsTable));
 	var html = render.resultsTemplate({
 		results: results,
 		err: err,
 		fields: fields,
-		resultsTable: resultsTable,
+		resultsTable: (resultsTable),
 		title: 'Results'
 		});
 	response.write(html);
@@ -37,22 +38,70 @@ function upload(request, response) {
   response.write("Hello Upload");
   response.end();
 }
-function googlify(sqlResults)
+function googlify(fields,sqlResults)
 {
+	//console.log(stringify(fields));
+	//console.log("------------");
 	var r= new Array;
+	var	rStr = "[";
 	for (var i in sqlResults)
 	{
 		r[i]= new Array;
+		rStr += "[";
 		var k=0;
 		for (var j in sqlResults[i])
 	{
-		{r[i][k] = sqlResults[i][j].toString();}
+		if (fields[j]["fieldType"] == "246")
+			{	r[i][k] = parseFloat(sqlResults[i][j]);
+				rStr += sqlResults[i][j];
+			}
+		else if (fields[j]["fieldType"] == "12") {
+				r[i][k] = sqlResults[i][j].toString();
+				rStr += "new Date('" + sqlResults[i][j] + "')";
+		}
+		else {
+				r[i][k] = sqlResults[i][j].toString();
+				rStr += "'" + sqlResults[i][j] + "'";
+		}
+		if (k != Object.keys(fields).length-1) {rStr+= ","}
 		k ++;
 	}
-	}
 
-	return r;
+	rStr += "]";
+	if (i != sqlResults.length-1) {rStr+= ","}
+	}
+	rStr += "]";
+	//return r;
+	return rStr;
 }
+// implement JSON.stringify serialization
+function stringify (obj)
+{
+    var t = typeof (obj);
+    if (t != "object" || obj === null) {
+        // simple data type
+        if (t == "string") obj = '"k'+obj+'"';
+        return String(obj);
+    }
+    else {
+        // recurse array or object
+        var n, v, json = [], arr = (obj && obj.constructor == Array);
+        for (n in obj) {
+            v = obj[n]; t = typeof(v);
+            d = new Date(v);
+            nd = new Date();;
+            if(v && v.getUTCDay) { t  = "date"}
+            //if (d != "Invalid Date" && d!=new Date(0)) { t  = "date"}
+            //console.log(t);
+
+            if (t == "string") {v = '"'+v+'"';}
+            else if (t == "date")  {v = 'new Date("'+v+'")';}
+            else if (t == "object" && v !== null) v = stringify(v);
+							json.push((arr ? "" : '"' + n + '":') + String(v));
+				}
+				return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}");
+		}
+	}
 exports.start = start;
 exports.query = query;
 exports.upload = upload;
