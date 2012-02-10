@@ -13,12 +13,13 @@ client.query('USE '+params.DATABASE);
 r = client.query(
   sql, function (err, results, fields) {
     if (err) {
-      throw err;
+    	console.log("screwed" +err);
+      callback(err, fields, results)
     }
     //console.log(results);
     //console.log(fields);
     //client.end();
-		callback(fields, results);
+		callback(err, fields, results);
   });
 
 

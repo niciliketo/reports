@@ -17,9 +17,12 @@ var fields, results, err;
   sqltxt = require('querystring').parse(request.url, true)["/query?sql"]
   console.log(sqltxt);
   response.writeHead(200, {"Content-Type": "text/html"});
-  db.runQuery(sqltxt, function(fields, results, err){
+  db.runQuery(sqltxt, function(err, fields, results){
+  if (err == null) {
   var resultsTable=googlify(fields, results);
   console.log((resultsTable));
+  }
+  else { var resultsTable=null;console.log("2:"+err);}
 	var html = render.resultsTemplate({
 		results: results,
 		err: err,

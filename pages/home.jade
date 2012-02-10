@@ -39,7 +39,9 @@ html(lang="en")
 		h1 Query Runner
 		form(name='query')
 			textarea(multiline='true', row='5', cols='50',id='sql', name='sql')
-				|SELECT bids.created_at, bids.price, users.login FROM bids INNER JOIN users ON bids.user_id = users.id INNER JOIN events ON events.id = bids.event_id WHERE bids.lot_id = 661 and bids.created_at > events.start_at ORDER BY bids.created_at ASC
+				|SELECT bids.created_at,  CASE users.login WHEN 'doug@rhphillips.co.uk' THEN bids.price ELSE null END "doug@rhphillips.co.uk",CASE users.login WHEN 'nick.miles@jklsolutions.co.uk' THEN bids.price ELSE null END "nick.miles@jklsolutions.co.uk",CASE users.login WHEN 'colin.field@lyreco.com' THEN bids.price ELSE null END "colin.field@lyreco.com",CASE users.login WHEN 'chris.tucker@officeteam.co.uk' THEN bids.price ELSE null END "chris.tucker@officeteam.co.uk",CASE users.login WHEN 'tenders.helpdesk@officedepot.co.uk' THEN bids.price ELSE null END "tenders.helpdesk@officedepot.co.uk"   FROM bids INNER JOIN users ON bids.user_id = users.id INNER JOIN events ON events.id = bids.event_id WHERE bids.lot_id = 1213 and bids.created_at > events.start_at ORDER BY bids.created_at ASC
+
+
 			input(type='submit', class='button', id='submit')
 		span(id='queryResults')
 		div(id="table_div", style="width: 700px; height: 240px;")

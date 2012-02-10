@@ -1,29 +1,32 @@
-h1 Results #{results.length}
+-if (err != null)
+	p Error: #{err}
+-else
+	h1 Results #{results.length}
+	!= "<script type='text/javascript'>"
+	!= "var data = new google.visualization.DataTable();"
+	!= "var nic = " + JSON.stringify(fields) +";"
+	each field in fields
+		-if (field["fieldType"] == "12")
+			!= "data.addColumn('date', '" + field["name"] + "');"
+		-else if (field["fieldType"] == "246")
+			!= "data.addColumn('number', '" + field["name"] + "');"
+		-else
+			!= "data.addColumn('string', '" + field["name"] + "');"
 
-!= "<script type='text/javascript'>"
-!= "var data = new google.visualization.DataTable();"
-!= "var nic = " + JSON.stringify(fields) +";"
-each field in fields
-	-if (field["fieldType"] == "12")
-		!= "data.addColumn('date', '" + field["name"] + "');"
-	-else if (field["fieldType"] == "246")
-		!= "data.addColumn('number', '" + field["name"] + "');"
-	-else
-		!= "data.addColumn('string', '" + field["name"] + "');"
+	!= "data.addRows(" + resultsTable +");"
 
-!= "data.addRows(" + resultsTable +");"
+	!= "</script>"
+	script(type='text/javascript')
+		var fmt = new google.visualization.DateFormat({pattern: 'dd/MM/yyy HH:mm:ss'})
+		var formatter_long = new google.visualization.DateFormat({formatType: 'long'});
+		fmt.format(data,0);
+		function drawChart() {
+		var options = {'title':'#{title}', 'interpolateNulls': true};
 
-!= "</script>"
-script(type='text/javascript')
+		// Instantiate and draw our chart, passing in some options.
 
-	function drawChart() {
-	var options = {'title':'#{title}'};
-
-	// Instantiate and draw our chart, passing in some options.
-
-	data.removeColumn(2);
-	var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-	chart.draw(data, options);
-	var table = new google.visualization.Table(document.getElementById('table_div'));
-	table.draw(data, {showRowNumber: true});
-	}
+		var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+		chart.draw(data, options);
+		var table = new google.visualization.Table(document.getElementById('table_div'));
+		table.draw(data, {showRowNumber: true});
+		}
